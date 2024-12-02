@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JToggleButton;
@@ -27,9 +29,10 @@ final class DecToDni {
 	private static final byte B_25 = 25;
 
 	private final JToggleButton[] tb1s = new JToggleButton[5];
-	private final DniPane dniCharPane = new DniPane();
+	private final DniPane dniTopPane = new DniPane(), dniCharPane = new DniPane();
 	private final ButtonGroup bg5s = new ButtonGroup(), bg1s = new ButtonGroup();
 	private final JPanel dni5s = new JPanel(new GridLayout(0, 1)), dni1s = new JPanel(new GridLayout(0, 1));
+	private final JSpinner spin = new JSpinner(new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1));
 	private int d5 = 0, d1 = 1;
 
 	private void start() {
@@ -37,11 +40,10 @@ final class DecToDni {
 			JFrame frame = new JFrame("Decimal-Dani Converter");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
-			JSpinner spin = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 			JPanel decToDni = new JPanel(), dni = new JPanel(), dniCharOp = new JPanel(new GridLayout(0, 1));
 			spin.setPreferredSize(new Dimension(60, spin.getPreferredSize().height));
 			decToDni.add(spin);
-			DniPane dniTopPane = new DniPane();
+			decToDni.add(new JLabel("="));
 			dniTopPane.setPreferredSize(new Dimension(DniPane.GW * 4, dniTopPane.getPreferredSize().height));
 			spin.addChangeListener(e -> {
 				Stack<Integer> stack = new Stack<>();
@@ -87,19 +89,29 @@ final class DecToDni {
 			dni.add(dni5s);
 			dni.add(dni1s);
 			dniCharOp.add(dniCharPane);
-			JButton bAdd = new JButton("Add Char");
-			bAdd.addActionListener(e -> {
+			dniCharOp.add(createButton("Add Digit", e -> {
 				int i = dniTopPane.digits.length;
 				int[] arr = Arrays.copyOf(dniTopPane.digits, i + 1);
 				arr[i] = dniCharPane.digits[0];
-				dniTopPane.setDigits(arr);
-			});
-			dniCharOp.add(bAdd);
+				updateDni(arr);
+			}));
+			dniCharOp.add(createButton("Backspace", e -> {
+				if (dniTopPane.digits.length > 0)
+					updateDni(Arrays.copyOf(dniTopPane.digits, dniTopPane.digits.length - 1));
+			}));
 			dni.add(dniCharOp);
 			frame.add(dni);
 			frame.pack();
 			frame.setVisible(true);
 		});
+	}
+
+	private void updateDni(int... arr) {
+		dniTopPane.setDigits(arr);
+		int i = 0;
+		for (byte n = 0; n < arr.length; ++n)
+			i += arr[n] * Math.pow(25, arr.length - n - 1);
+		spin.setValue(i);
 	}
 
 	private void set1s(boolean enabled) {
@@ -135,6 +147,12 @@ final class DecToDni {
 
 	private JToggleButton create5sToggleButton() {
 		JToggleButton b = createToggleButton(bg5s, dni5s);
+		return b;
+	}
+
+	private static JButton createButton(String label, ActionListener l) {
+		JButton b = new JButton(label);
+		b.addActionListener(l);
 		return b;
 	}
 
