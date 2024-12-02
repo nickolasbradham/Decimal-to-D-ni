@@ -199,6 +199,7 @@ final class DecToDni {
 		public void paint(Graphics g) {
 			super.paint(g);
 			Graphics2D g2 = (Graphics2D) g;
+			g.translate(getWidth() / 2 - digits.length * GW / 2, 0);
 			int d;
 			for (int i : digits) {
 				if (i == 25)
