@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 final class DecToDni {
@@ -27,9 +28,9 @@ final class DecToDni {
 				JFrame frame = new JFrame("Decimal to Dani");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setLayout(new FlowLayout());
-				JSpinner spin = new JSpinner();
+				JSpinner spin = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 				int h = spin.getPreferredSize().height;
-				spin.setPreferredSize(new Dimension(50, h));
+				spin.setPreferredSize(new Dimension(60, h));
 				frame.add(spin);
 				JPanel pane = new JPanel() {
 					private static final long serialVersionUID = 1L;
@@ -68,7 +69,7 @@ final class DecToDni {
 					}
 				};
 				spin.addChangeListener(e -> pane.repaint());
-				pane.setPreferredSize(new Dimension(100, h));
+				pane.setPreferredSize(new Dimension(70, h));
 				frame.add(pane);
 				frame.pack();
 				frame.setVisible(true);
