@@ -37,7 +37,7 @@ final class DecToDni {
 					private static final long serialVersionUID = 1L;
 					private static final byte B_25 = 25, B_5 = 5;
 					private static final float PI_2 = (float) (-Math.PI / 2);
-					private final float w = bis[0].getWidth(), hw = w / 2, hh = bis[0].getHeight() / 2, wm1 = w - 1;
+					private final int w = bis[0].getWidth(), hw = w / 2, hh = bis[0].getHeight() / 2, wm1 = w - 1;
 
 					@Override
 					public void paint(Graphics g) {
