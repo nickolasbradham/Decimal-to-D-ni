@@ -17,14 +17,15 @@ import javax.swing.SwingUtilities;
 
 final class DecToDni {
 
+	private static BufferedImage readImage(String name) throws IOException {
+		return ImageIO.read(DecToDni.class.getResource("/" + name + ".png"));
+	}
+
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			try {
-				BufferedImage[] bis = { ImageIO.read(DecToDni.class.getResource("/1.png")),
-						ImageIO.read(DecToDni.class.getResource("/2.png")),
-						ImageIO.read(DecToDni.class.getResource("/3.png")),
-						ImageIO.read(DecToDni.class.getResource("/4.png")),
-						ImageIO.read(DecToDni.class.getResource("/25.png")) };
+				BufferedImage[] bis = { readImage("1"), readImage("2"), readImage("3"), readImage("4"),
+						readImage("25") };
 				JFrame frame = new JFrame("Decimal to Dani");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setLayout(new FlowLayout());
