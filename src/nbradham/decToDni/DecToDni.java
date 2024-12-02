@@ -40,43 +40,31 @@ final class DecToDni {
 					@Override
 					public void paint(Graphics g) {
 						super.paint(g);
-						int i = (int) spin.getValue();
+						int i = (int) spin.getValue(), d;
 						Stack<Integer> stack = new Stack<>();
 						while (i > 0) {
-							stack.push(i % B_25);
+							d = i % B_25;
 							i /= B_25;
-						}
-						System.out.println(stack);
-						Graphics2D g2d = (Graphics2D) g;
-						//TODO Fix this.
-						boolean f25 = false;
-						while (!stack.isEmpty()) {
-							i = stack.pop();
-							if (i == 1 && !stack.isEmpty() && stack.peek() == 0) {
-								f25 = true;
-								drawDigit(g2d, i == 0 ? 24 : --i);
+							if (d == 0) {
+								stack.push(25);
+								--i;
 							} else
-								drawDigit(g2d, i);
+								stack.push(d);
 						}
-						if (f25)
-							g2d.drawRenderedImage(bis[4], null);
-					}
-
-					private final void drawDigit(Graphics2D g2d, int i) {
-						boolean drew = drawImg(g2d, i);
-						g2d.rotate(PI_2, hh, hw);
-						drew = drawImg(g2d, i / B_5) || drew;
-						g2d.rotate(-PI_2, hh, hw);
-						if (drew)
-							g2d.translate(wm1, 0);
-					}
-
-					private final boolean drawImg(Graphics2D g, int i) {
-						if ((i %= B_5) > 0) {
-							g.drawRenderedImage(bis[i - 1], null);
-							return true;
+						Graphics2D g2 = (Graphics2D) g;
+						while (!stack.isEmpty()) {
+							if ((i = stack.pop()) == 25)
+								g2.drawRenderedImage(bis[4], null);
+							else {
+								if ((d = i % B_5) > 0)
+									g2.drawRenderedImage(bis[d - 1], null);
+								g2.rotate(PI_2, hh, hw);
+								if ((i = i / B_5 % B_5) > 0)
+									g2.drawRenderedImage(bis[i - 1], null);
+								g2.rotate(-PI_2, hh, hw);
+							}
+							g2.translate(wm1, 0);
 						}
-						return false;
 					}
 				};
 				spin.addChangeListener(e -> pane.repaint());
