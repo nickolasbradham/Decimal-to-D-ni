@@ -24,6 +24,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+/**
+ * Handles the entire program.
+ */
 final class DecToDni {
 
 	private static final byte B_25 = 25;
@@ -35,6 +38,9 @@ final class DecToDni {
 	private final JSpinner spin = new JSpinner(new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1));
 	private int d5 = 0, d1 = 1;
 
+	/**
+	 * Creates and shows the GUI.
+	 */
 	private void start() {
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new JFrame("Decimal-Dani Converter");
@@ -84,7 +90,7 @@ final class DecToDni {
 				d5 = 25;
 				tb1s[0].setEnabled(true);
 				tb1s[0].doClick();
-				SwingUtilities.invokeLater(() -> set1s(false));
+				SwingUtilities.invokeLater(() -> set1sEnabled(false));
 			});
 			dni.add(dni5s);
 			dni.add(dni1s);
@@ -106,56 +112,106 @@ final class DecToDni {
 		});
 	}
 
-	private void updateDni(int... arr) {
-		dniTopPane.setDigits(arr);
+	/**
+	 * Updates the D'ni number and sets the Spinner to the converted Decimal value.
+	 * 
+	 * @param dniDigits The digits of the D'ni number.
+	 */
+	private void updateDni(int... dniDigits) {
+		dniTopPane.setDigits(dniDigits);
 		int i = 0;
-		for (byte n = 0; n < arr.length; ++n)
-			i += arr[n] * Math.pow(25, arr.length - n - 1);
+		for (byte n = 0; n < dniDigits.length; ++n)
+			i += dniDigits[n] * Math.pow(25, dniDigits.length - n - 1);
 		spin.setValue(i);
 	}
 
-	private void set1s(boolean enabled) {
+	/**
+	 * Sets the enable state of all {@link JToggleButton}s in the 1s column.
+	 * 
+	 * @param enabled Whether the buttons should be enabled or not.
+	 */
+	private void set1sEnabled(boolean enabled) {
 		for (JToggleButton t : tb1s)
 			t.setEnabled(enabled);
 	}
 
-	private void updateChar() {
+	/**
+	 * Updates the D'ni char that would be added if the add button is clicked.
+	 */
+	private void updateDniChar() {
 		dniCharPane.setDigits(d5 + d1);
 	}
 
+	/**
+	 * Calls {@link #createToggleButton(ButtonGroup, JPanel)}, passing in the 1s
+	 * button group and pane and adds an action listener.
+	 * 
+	 * @param val The decimal value of this button.
+	 * @return The instance of the created button.
+	 */
 	private JToggleButton create1sToggleButton(int val) {
 		JToggleButton b = createToggleButton(bg1s, dni1s);
 		b.addActionListener(e -> {
 			d1 = val;
-			updateChar();
+			updateDniChar();
 		});
 		return b;
 	}
 
+	/**
+	 * Calls {@link #create5sToggleButtonWAct(int, boolean)}, passing in {@code val}
+	 * and {@code tb10en} and adds an action listener.
+	 * 
+	 * @param val    The decimal value of this button.
+	 * @param tb10en What to set the enable state of the 0 button in the 1s column
+	 *               on click.
+	 * @return The instance of the created button.
+	 */
 	private JToggleButton create5sToggleButtonWAct(int val, boolean tb10en) {
 		JToggleButton b = create5sToggleButton();
 		b.addActionListener(e -> {
 			d5 = val;
-			set1s(true);
+			set1sEnabled(true);
 			tb1s[0].setEnabled(tb10en);
 			if (!tb10en && tb1s[0].isSelected())
 				tb1s[1].doClick();
-			updateChar();
+			updateDniChar();
 		});
 		return b;
 	}
 
+	/**
+	 * Calls {@link #createToggleButton(ButtonGroup, JPanel)}, passing in the 5s
+	 * button group and pane.
+	 * 
+	 * @return The new button instance.
+	 */
 	private JToggleButton create5sToggleButton() {
-		JToggleButton b = createToggleButton(bg5s, dni5s);
-		return b;
+		return createToggleButton(bg5s, dni5s);
 	}
 
+	/**
+	 * Constructs a new {@link JButton}, sets the label to {@code label}, and adds
+	 * {@code l} to the listeners.
+	 * 
+	 * @param label The label of the button.
+	 * @param l     The {@link ActionListener} to add to the button.
+	 * @return The new button instance.
+	 */
 	private static JButton createButton(String label, ActionListener l) {
 		JButton b = new JButton(label);
 		b.addActionListener(l);
 		return b;
 	}
 
+	/**
+	 * Constructs a new {@link JToggleButton} and adds it to the specified
+	 * {@link ButtonGroup} and {@link JPanel}.
+	 * 
+	 * @param bg   The {@link ButtonGroup} to add the new button too.
+	 * @param pane The {@link JPanel} to add the new button too.
+	 * @return The new button instance.
+	 */
 	private static JToggleButton createToggleButton(ButtonGroup bg, JPanel pane) {
 		JToggleButton b = new JToggleButton();
 		bg.add(b);
@@ -163,14 +219,18 @@ final class DecToDni {
 		return b;
 	}
 
-	private static BufferedImage readImage(int i) throws IOException {
-		return ImageIO.read(DecToDni.class.getResource("/" + i + ".png"));
-	}
-
+	/**
+	 * Constructs and starts a new {@link #DecToDni()} instance.
+	 * 
+	 * @param args Ignored.
+	 */
 	public static void main(String[] args) {
 		new DecToDni().start();
 	}
 
+	/**
+	 * Used to display D'ni numbers.
+	 */
 	private static final class DniPane extends JPanel {
 		private static final BufferedImage[] GLYPHS = new BufferedImage[5];
 		static {
@@ -191,6 +251,9 @@ final class DecToDni {
 
 		private int[] digits = { 1 };
 
+		/**
+		 * Constructs a new {@link DniPane}.
+		 */
 		private DniPane() {
 			setPreferredSize(new Dimension(16, 16));
 		}
@@ -216,14 +279,37 @@ final class DecToDni {
 			}
 		}
 
+		/**
+		 * Sets the D'ni digits to display.
+		 * 
+		 * @param newDigits The new D'ni digits. Each digit is in Decimal an in the
+		 *                  range of [0,25].
+		 */
 		private void setDigits(int... newDigits) {
 			digits = newDigits;
 			repaint();
 		}
 
+		/**
+		 * Rotates {@code g2} by -pi/2 and draws {@code bi} to it.
+		 * 
+		 * @param g2 The {@link Gaphics2D} instance to use.
+		 * @param bi The {@link BufferedImage} to draw to {@code g2}.
+		 */
 		private static final void rotateDraw(Graphics2D g2, BufferedImage bi) {
 			g2.rotate(PI_2, HH, HW);
 			g2.drawRenderedImage(bi, null);
+		}
+
+		/**
+		 * Retrieves the image of the specified digit character from disk.
+		 * 
+		 * @param i The digit to retrieve.
+		 * @return The character image.
+		 * @throws IOException Thrown by {@link ImageIO#read(java.net.URL)}.
+		 */
+		private static BufferedImage readImage(int i) throws IOException {
+			return ImageIO.read(DecToDni.class.getResource("/" + i + ".png"));
 		}
 	}
 }
